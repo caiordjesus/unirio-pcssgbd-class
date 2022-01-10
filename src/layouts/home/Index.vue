@@ -5,8 +5,6 @@
     <home-view />
 
     <home-footer />
-
-    <home-settings />
   </v-app>
 </template>
 

@@ -29,6 +29,18 @@ const router = new Router({
           component: () => import('@/views/pro/Index.vue'),
           meta: { src: require('@/assets/pro.jpg') },
         },
+        {
+          path: 'login',
+          name: 'Login',
+          component: () => import('@/views/login/Index.vue'),
+          meta: { src: require('@/assets/pro.jpg') },
+        },
+        {
+          path: 'platform',
+          name: 'Platform',
+          component: () => import('@/views/platform/Index.vue'),
+          meta: { src: require('@/assets/pro.jpg') },
+        },
       ],
     },
 

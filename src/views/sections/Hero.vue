@@ -2,7 +2,7 @@
   <section id="hero">
     <v-img
       :min-height="minHeight"
-      :src="require('@/assets/light.jpg')"
+      :src="require('@/assets/kipao.jpeg')"
       class="white--text"
       gradient="to bottom, rgba(11, 28, 61, .9), rgba(0,0,0,.4)"
     >
@@ -15,28 +15,28 @@
         >
           <base-subheading
             weight="regular"
-            title="WE LOVE MAKING THINGS SIMPLE AND AMAZING"
+            title="WE LOVE MAKING PÃO"
           />
 
           <base-heading
             size="text-h2"
-            title="WELCOME TO ZERO"
+            title="WELCOME TO KIPAO"
             weight="medium"
           />
 
           <base-body>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae nobis neque aspernatur in quas iure id aliquid, esse debitis, quibusdam mollitia! Quia ea expedita magnam totam, earum omnis et perspiciatis?
+            FRESQUINHO, GOSTOSINHO
           </base-body>
 
           <div
             :class="$vuetify.breakpoint.smAndDown ? 'flex-column align-start' : 'align-center'"
             class="d-flex flex-wrap"
           >
-            <base-btn>
-              Discover More
+            <base-btn to="login">
+              LOGIN
             </base-btn>
 
-            <span class="font-weight-bold ml-6 mr-4 my-4">or</span>
+            <span class="font-weight-bold ml-6 mr-4 my-4">ou</span>
 
             <base-btn
               :ripple="false"
@@ -44,7 +44,7 @@
               height="auto"
               text
             >
-              Get Started Now
+              CADASTRE-SE
             </base-btn>
           </div>
         </v-responsive>
