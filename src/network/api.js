@@ -14,3 +14,13 @@ export async function getApi (path, params) {
     })
     return response.data
 }
+
+export async function postApi (path, body) {
+    const token = localStorage.getItem('token') || null
+
+    return instance.post(path, body, {
+        headers: {
+            token: token,
+        },
+    })
+}
