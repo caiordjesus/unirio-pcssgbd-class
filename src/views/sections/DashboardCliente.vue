@@ -1,6 +1,6 @@
 <template>
   <base-section id="dashboard-cliente">
-    <h1>DASHBOARD CLIENTE {{ getProdutos() }} </h1>
+    <h1>DASHBOARD CLIENTE {{ getProdutos() }}</h1>
   </base-section>
 </template>
 
@@ -11,11 +11,11 @@
 
     data: () => ({}),
     methods: {
-        async getProdutos () {
-            const resp = await getApi('v1/produtos')
-            console.log(resp)
-            return ''
-        },
+      async getProdutos () {
+        const resp = await getApi('v1/produtos')
+        console.log(resp)
+        return ''
+      },
     },
   }
 </script>
