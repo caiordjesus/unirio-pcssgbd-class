@@ -36,9 +36,9 @@ const router = new Router({
           meta: { src: require('@/assets/pro.jpg') },
         },
         {
-          path: 'platform',
-          name: 'Platform',
-          component: () => import('@/views/platform/Index.vue'),
+          path: 'dashboardCliente',
+          name: 'DashboardCliente',
+          component: () => import('@/views/dashboardCliente/Index.vue'),
           meta: { src: require('@/assets/pro.jpg') },
         },
       ],

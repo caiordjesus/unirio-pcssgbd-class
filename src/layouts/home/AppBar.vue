@@ -24,7 +24,7 @@
 
       <v-spacer />
 
-      <div>
+      <div v-if="notLogged()">
         <v-tabs
           class="hidden-sm-and-down"
           optional
@@ -39,6 +39,25 @@
             class="font-weight-bold"
             min-width="96"
             text
+          >
+            {{ name }}
+          </v-tab>
+        </v-tabs>
+      </div>
+      <div v-else>
+        <v-tabs
+          class="hidden-sm-and-down"
+          optional
+          background-color="transparent"
+        >
+          <v-tab
+            v-for="(name, i) in whenLogged"
+            :key="i"
+            :ripple="true"
+            class="font-weight-bold"
+            min-width="96"
+            text
+            @click="logout()"
           >
             {{ name }}
           </v-tab>
@@ -62,9 +81,22 @@
       items: [
         'Home',
         'Login',
-        'platform',
+      ],
+      whenLogged: [
+        'Sair',
       ],
     }),
+
+    methods: {
+      notLogged () {
+        const isLogged = localStorage.getItem('login')
+        return !isLogged
+      },
+      logout () {
+        localStorage.clear()
+      },
+    },
+
   }
 </script>
 

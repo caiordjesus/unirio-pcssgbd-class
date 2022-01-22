@@ -57,6 +57,8 @@
     methods: {
       async login () {
         console.log('estou conectando à API e logando')
+        localStorage.setItem('login', true)
+        this.$router.push('DashboardCliente')
       },
     },
   }
