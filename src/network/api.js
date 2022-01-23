@@ -12,7 +12,7 @@ export async function getApi (path, params) {
         },
         params: params,
     })
-    return response.data
+    return response
 }
 
 export async function postApi (path, body) {

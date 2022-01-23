@@ -8,23 +8,16 @@
       height="80"
     >
       <base-img
-        :src="require('@/assets/logo.svg')"
+        :src="require('@/assets/kipao.png')"
         class="mr-3 hidden-xs-only"
         contain
         max-width="46"
         width="100%"
       />
 
-      <base-img
-        :src="require(`@/assets/zero-logo-${$vuetify.theme.isDark ? 'dark' : 'light'}.svg`)"
-        contain
-        max-width="96"
-        width="100%"
-      />
-
       <v-spacer />
 
-      <div v-if="notLogged()">
+      <div v-if="!logged">
         <v-tabs
           class="hidden-sm-and-down"
           optional
@@ -86,14 +79,21 @@
         'Sair',
       ],
     }),
-
-    methods: {
-      notLogged () {
-        const isLogged = localStorage.getItem('login')
-        return !isLogged
+    computed: {
+      logged () {
+        return this.$store.state.logged
       },
+    },
+    watch: {
+      logged (newVal, oldVal) {
+        console.log(`Alternando estado de login. Antes: ${oldVal}, agora: ${newVal}`)
+      },
+    },
+    methods: {
       logout () {
         localStorage.clear()
+        this.$store.commit('logout')
+        this.$router.push('/')
       },
     },
 
