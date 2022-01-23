@@ -1,26 +1,12 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
 import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
 import './plugins'
 
-Vue.config.productionTip = false
-Vue.use(Vuex)
+import store from './store'
 
-const store = new Vuex.Store({
-  state: {
-    logged: false,
-  },
-  mutations: {
-    logout (state) {
-      state.logged = false
-    },
-    login (state) {
-      state.logged = true
-    },
-  },
-})
+Vue.config.productionTip = false
 
 new Vue({
   router,
