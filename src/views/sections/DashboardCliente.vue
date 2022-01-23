@@ -170,11 +170,16 @@
       enderecos: [],
     }),
     created () {
-      this.$forceUpdate()
+      this.checkLogin()
       this.getPedidos()
       this.getEnderecos()
     },
     methods: {
+      checkLogin () {
+        if (!this.$store.state.logged) {
+          this.$router.push('/')
+        }
+      },
       async getPedidos () {
         const { data, status } = await getApi('v1/pedidos')
 
