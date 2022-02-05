@@ -47,6 +47,12 @@ const router = new Router({
           component: () => import('@/views/dashboardCliente/Index.vue'),
           meta: { src: require('@/assets/pro.jpg') },
         },
+        {
+          path: 'novoPedido',
+          name: 'NovoPedido',
+          component: () => import('@/views/novoPedido/Index.vue'),
+          meta: { src: require('@/assets/pro.jpg') },
+        },
       ],
     },
 

@@ -12,6 +12,7 @@
               fab
               dark
               color="indigo"
+              :to="'novoPedido'"
             >
               <v-icon dark>
                 mdi-plus
@@ -258,8 +259,8 @@
         items: [],
         frete: 0,
         valor_total: 0,
-        id_cliente: 0,
       },
+      id_cliente: 0,
       assinaturas: [],
     }),
     created () {
