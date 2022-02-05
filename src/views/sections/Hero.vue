@@ -43,6 +43,7 @@
               class="pa-1"
               height="auto"
               text
+              to="cadastro"
             >
               CADASTRE-SE
             </base-btn>

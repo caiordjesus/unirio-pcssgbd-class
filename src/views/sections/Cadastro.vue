@@ -95,7 +95,7 @@
           <v-col>
             <v-btn
               color="warning"
-              @click="cadastrar"
+              @click.native="cadastrar"
             >
               Cadastrar
             </v-btn>
@@ -135,7 +135,7 @@
         return () => (this.senha === this.senhaConfirmada) || 'Senha não correspondentes'
       },
     },
-    methods: () => ({
+    methods: {
       validate () {
         return this.$refs.form.validate()
       },
@@ -143,17 +143,22 @@
         console.log('estou conectando à API e cadastrando')
         if (this.validate()) {
           const { status, data } = await postApi('/v1/auth/signup', {
-            user: this.usuario,
+            nome: this.nome,
             pass: this.senha,
+            usuario: this.usuario,
+            cpf: this.cpf,
+            telefone: this.telefone,
+            celular: this.celular,
+            senha: this.senha,
           })
 
           if (status >= '200' && status < 300) {
-            localStorage.setItem('login', true)
             localStorage.setItem('token', data.data.token)
+            this.$store.commit('login')
             this.$router.push('DashboardCliente')
           }
         }
       },
-    }),
+    },
   }
 </script>

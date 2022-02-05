@@ -6,13 +6,12 @@ const instance = axios.create({
 
 export async function getApi (path, params) {
     const token = localStorage.getItem('token') || null
-    const response = await instance.get(path, {
+    return await instance.get(path, {
         headers: {
             token: token,
         },
         params: params,
     })
-    return response
 }
 
 export async function postApi (path, body) {
