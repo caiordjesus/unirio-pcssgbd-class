@@ -8,7 +8,7 @@
   export default {
     name: 'Login',
 
-    metaInfo: { title: 'Pro Features' },
+    metaInfo: { title: 'Kipao' },
 
     extends: View,
 

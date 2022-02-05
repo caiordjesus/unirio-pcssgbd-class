@@ -1,5 +1,6 @@
 <template>
   <base-section id="dashboard-cliente">
+    <!-- container-principal -->
     <v-container>
       <!-- Meus pedidos -->
       <div class="row">
@@ -157,6 +158,75 @@
       </div>
       <hr class="solid">
     </v-container>
+
+    <!-- Explorar pedido -->
+    <div class="text-center">
+      <v-dialog
+        v-model="explorar_pedido.modal"
+        width="500"
+      >
+        <v-card>
+          <v-card-title class="text-h5 grey lighten-2">
+            Explorar pedido: {{ explorar_pedido.code }}
+          </v-card-title>
+
+          <v-simple-table
+            fixed-header
+            height="300px"
+          >
+            <template #default>
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    Item
+                  </th>
+                  <th class="text-right">
+                    Qtd
+                  </th>
+                  <th class="text-right">
+                    Valor Total
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="item in explorar_pedido.items"
+                  :key="item.item"
+                >
+                  <td>{{ item.item }}</td>
+                  <td class="text-right">
+                    {{ item.qtd }}
+                  </td>
+                  <td class="text-right">
+                    {{ item.totalValue }}
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+
+          <v-container>
+            <div class="text-right">
+              <h3>Entrega: {{ explorar_pedido.frete }}</h3>
+              <h3>Valor total: {{ explorar_pedido.valor_total }}</h3>
+            </div>
+          </v-container>
+
+          <v-divider />
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="primary"
+              text
+              @click="explorar_pedido.modal = false"
+            >
+              Pedir de novo
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
   </base-section>
 </template>
 
@@ -168,6 +238,13 @@
     data: () => ({
       pedidos: [],
       enderecos: [],
+      explorar_pedido: {
+        modal: false,
+        code: '',
+        items: [],
+        frete: 0,
+        valor_total: 0,
+      },
     }),
     created () {
       this.checkLogin()
@@ -181,23 +258,26 @@
         }
       },
       async getPedidos () {
-        const { data, status } = await getApi('v1/pedidos')
+        const { data, status } = await getApi('v1/cliente/1/pedidos')
 
         if (status >= 200 && status < 300) {
-          this.pedidos = data.data.pedidos
+          this.pedidos = data.pedidos
         }
       },
       async getEnderecos () {
         const { data, status } = await getApi('v1/cliente/1/enderecos')
-        console.log(data.data.enderecos)
+
         if (status >= 200 && status < 300) {
-          this.enderecos = data.data.enderecos
+          this.enderecos = data.data
         }
       },
       async explorarPedido (code) {
-        // TODO: chamar modal
-        console.log('Explorando pedido')
-        return true
+        const { data } = await getApi(`v1/pedidos/${code}`)
+        this.explorar_pedido.code = data.order.id
+        this.explorar_pedido.frete = data.order.frete
+        this.explorar_pedido.valor_total = data.order.preco_total
+        this.explorar_pedido.items = data.details
+        this.explorar_pedido.modal = true
       },
     },
   }
