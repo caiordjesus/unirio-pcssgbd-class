@@ -47,7 +47,8 @@
             </v-btn>
 
             <v-btn
-              color="warning"
+              color="blue"
+              style="margin-left: 10px"
               to="/cadastro"
             >
               Cadastro
