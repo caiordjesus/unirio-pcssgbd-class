@@ -1,5 +1,6 @@
 <template>
   <base-section id="dashboard-cliente">
+    <!-- container-principal -->
     <v-container>
       <!-- Meus pedidos -->
       <div class="row">
@@ -157,48 +158,75 @@
       </div>
       <hr class="solid">
     </v-container>
-    <template>
+
+    <!-- Explorar pedido -->
     <div class="text-center">
       <v-dialog
-        v-model="dialog"
+        v-model="explorar_pedido.modal"
         width="500"
       >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            color="red lighten-2"
-            dark
-            v-bind="attrs"
-            v-on="on"
-          >
-            Click Me
-          </v-btn>
-        </template>
-
         <v-card>
           <v-card-title class="text-h5 grey lighten-2">
-            Privacy Policy
+            Explorar pedido: {{ explorar_pedido.code }}
           </v-card-title>
 
-          <v-card-text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </v-card-text>
+          <v-simple-table
+            fixed-header
+            height="300px"
+          >
+            <template #default>
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    Item
+                  </th>
+                  <th class="text-right">
+                    Qtd
+                  </th>
+                  <th class="text-right">
+                    Valor Total
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="item in explorar_pedido.items"
+                  :key="item.item"
+                >
+                  <td>{{ item.item }}</td>
+                  <td class="text-right">
+                    {{ item.qtd }}
+                  </td>
+                  <td class="text-right">
+                    {{ item.totalValue }}
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
 
-          <v-divider></v-divider>
+          <v-container>
+            <div class="text-right">
+              <h3>Entrega: {{ explorar_pedido.frete }}</h3>
+              <h3>Valor total: {{ explorar_pedido.valor_total }}</h3>
+            </div>
+          </v-container>
+
+          <v-divider />
 
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               color="primary"
               text
-              @click="dialog = false"
+              @click="explorar_pedido.modal = false"
             >
-              I accept
+              Pedir de novo
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </div>
-  </template>
   </base-section>
 </template>
 
@@ -210,6 +238,13 @@
     data: () => ({
       pedidos: [],
       enderecos: [],
+      explorar_pedido: {
+        modal: false,
+        code: '',
+        items: [],
+        frete: 0,
+        valor_total: 0,
+      },
     }),
     created () {
       this.checkLogin()
@@ -223,10 +258,11 @@
         }
       },
       async getPedidos () {
-        const { data, status } = await getApi('v1/pedidos')
+        const { data, status } = await getApi('v1/cliente/1/pedidos')
+        console.log(data)
 
         if (status >= 200 && status < 300) {
-          this.pedidos = data.data.pedidos
+          this.pedidos = data.pedidos
         }
       },
       async getEnderecos () {
@@ -237,9 +273,13 @@
         }
       },
       async explorarPedido (code) {
-        // TODO: chamar modal
-        console.log('Explorando pedido')
-        return true
+        const { data } = await getApi(`v1/pedidos/${code}`)
+        console.log(data)
+        this.explorar_pedido.code = data.order.id
+        this.explorar_pedido.frete = data.order.frete
+        this.explorar_pedido.valor_total = data.order.preco_total
+        this.explorar_pedido.items = data.details
+        this.explorar_pedido.modal = true
       },
     },
   }
