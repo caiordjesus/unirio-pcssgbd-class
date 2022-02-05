@@ -1,6 +1,162 @@
 <template>
   <base-section id="dashboard-cliente">
-    <h1>DASHBOARD CLIENTE {{ getProdutos() }} </h1>
+    <v-container>
+      <!-- Meus pedidos -->
+      <div class="row">
+        <div class="col-12">
+          <h1>
+            Meus pedidos
+            <v-btn
+              class="mx-2"
+              fab
+              dark
+              color="indigo"
+            >
+              <v-icon dark>
+                mdi-plus
+              </v-icon>
+            </v-btn>
+          </h1>
+          <v-simple-table
+            fixed-header
+            height="300px"
+          >
+            <template #default>
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    Pedido
+                  </th>
+                  <th class="text-left">
+                    Status
+                  </th>
+                  <th class="text-center">
+                    Data
+                  </th>
+                  <th class="text-right">
+                    Explorar
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="pedido in pedidos"
+                  :key="pedido.code"
+                >
+                  <td>{{ pedido.code }}</td>
+                  <td>{{ pedido.status }}</td>
+                  <td class="text-center">
+                    {{ pedido.date }}
+                  </td>
+                  <td class="text-right">
+                    <v-btn
+                      tile
+                      color="success"
+                      @click="explorarPedido(pedido.code)"
+                    >
+                      Ver
+                    </v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </div>
+      </div>
+      <hr class="solid">
+      <!-- Meus Endereços -->
+      <div class="row">
+        <div class="col-12">
+          <h1>
+            Meus endereços
+            <v-btn
+              class="mx-2"
+              fab
+              dark
+              color="indigo"
+            >
+              <v-icon dark>
+                mdi-plus
+              </v-icon>
+            </v-btn>
+          </h1>
+          <v-simple-table
+            fixed-header
+            height="300px"
+          >
+            <template #default>
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    Cep
+                  </th>
+                  <th class="text-left">
+                    Logradouro
+                  </th>
+                  <th class="text-left">
+                    Número
+                  </th>
+                  <th class="text-left">
+                    Complemento
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="endereco in enderecos"
+                  :key="endereco.cep"
+                >
+                  <td>{{ endereco.cep }}</td>
+                  <td>{{ endereco.logradouro }}</td>
+                  <td>{{ endereco.numero }}</td>
+                  <td>{{ endereco.complemento }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </div>
+      </div>
+      <hr class="solid">
+      <!-- Minhas Assinaturas -->
+      <div class="row">
+        <div class="col-12">
+          <h1>Minhas Assinaturas</h1>
+          <v-simple-table
+            fixed-header
+            height="300px"
+          >
+            <template #default>
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    Pedido
+                  </th>
+                  <th class="text-left">
+                    Status
+                  </th>
+                  <th class="text-center">
+                    Data
+                  </th>
+                  <th class="text-right">
+                    Explorar
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="item in pedidos"
+                  :key="item.name"
+                >
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.calories }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </div>
+      </div>
+      <hr class="solid">
+    </v-container>
   </base-section>
 </template>
 
@@ -9,13 +165,47 @@
   export default {
     name: 'SectionDashboardCliente',
 
-    data: () => ({}),
+    data: () => ({
+      pedidos: [],
+      enderecos: [],
+    }),
+    created () {
+      this.checkLogin()
+      this.getPedidos()
+      this.getEnderecos()
+    },
     methods: {
-        async getProdutos () {
-            const resp = await getApi('v1/produtos')
-            console.log(resp)
-            return ''
-        },
+      checkLogin () {
+        if (!this.$store.state.logged) {
+          this.$router.push('/')
+        }
+      },
+      async getPedidos () {
+        const { data, status } = await getApi('v1/pedidos')
+
+        if (status >= 200 && status < 300) {
+          this.pedidos = data.data.pedidos
+        }
+      },
+      async getEnderecos () {
+        const { data, status } = await getApi('v1/cliente/1/enderecos')
+        console.log(data.data.enderecos)
+        if (status >= 200 && status < 300) {
+          this.enderecos = data.data.enderecos
+        }
+      },
+      async explorarPedido (code) {
+        // TODO: chamar modal
+        console.log('Explorando pedido')
+        return true
+      },
     },
   }
 </script>
+
+<style scoped>
+hr.solid {
+  border-top: 3px solid #bbb;
+  margin-bottom: 3em;
+}
+</style>

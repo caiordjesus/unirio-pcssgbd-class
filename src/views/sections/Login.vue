@@ -91,7 +91,7 @@
           })
 
           if (status >= '200' && status < 300) {
-            localStorage.setItem('login', true)
+            this.$store.commit('login')
             localStorage.setItem('token', data.data.token)
             this.$router.push('DashboardCliente')
           }
