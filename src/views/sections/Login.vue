@@ -45,6 +45,13 @@
             >
               Login
             </v-btn>
+
+            <v-btn
+              color="warning"
+              to="/cadastro"
+            >
+              Cadastro
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>

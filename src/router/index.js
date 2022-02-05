@@ -36,6 +36,12 @@ const router = new Router({
           meta: { src: require('@/assets/pro.jpg') },
         },
         {
+          path: 'cadastro',
+          name: 'Cadastro',
+          component: () => import('@/views/cadastro/Index.vue'),
+          meta: { src: require('@/assets/pro.jpg') },
+        },
+        {
           path: 'dashboardCliente',
           name: 'DashboardCliente',
           component: () => import('@/views/dashboardCliente/Index.vue'),
