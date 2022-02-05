@@ -9,7 +9,7 @@
     name: 'App',
     metaInfo: {
       title: 'App',
-      titleTemplate: '%s | Zero Free',
+      titleTemplate: '%s',
       htmlAttrs: { lang: 'en' },
       meta: [
         { charset: 'utf-8' },

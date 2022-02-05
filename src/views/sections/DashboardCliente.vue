@@ -259,7 +259,6 @@
       },
       async getPedidos () {
         const { data, status } = await getApi('v1/cliente/1/pedidos')
-        console.log(data)
 
         if (status >= 200 && status < 300) {
           this.pedidos = data.pedidos
@@ -267,14 +266,13 @@
       },
       async getEnderecos () {
         const { data, status } = await getApi('v1/cliente/1/enderecos')
-        console.log(data.data.enderecos)
+
         if (status >= 200 && status < 300) {
-          this.enderecos = data.data.enderecos
+          this.enderecos = data.data
         }
       },
       async explorarPedido (code) {
         const { data } = await getApi(`v1/pedidos/${code}`)
-        console.log(data)
         this.explorar_pedido.code = data.order.id
         this.explorar_pedido.frete = data.order.frete
         this.explorar_pedido.valor_total = data.order.preco_total
