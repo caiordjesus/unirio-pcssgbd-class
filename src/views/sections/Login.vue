@@ -93,7 +93,12 @@
           if (status >= '200' && status < 300) {
             this.$store.commit('login')
             localStorage.setItem('token', data.data.token)
-            this.$router.push('DashboardCliente')
+            if (data.data.id_cliente) {
+              localStorage.setItem('id_cliente', data.data.id_cliente)
+              this.$router.push('DashboardCliente')
+            } else {
+              localStorage.setItem('id_funcionario', data.data.id_funcionario)
+            }
           }
         }
       },
