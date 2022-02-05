@@ -244,28 +244,33 @@
         items: [],
         frete: 0,
         valor_total: 0,
+        id_cliente: 0,
       },
     }),
     created () {
       this.checkLogin()
+      this.getClientId()
       this.getPedidos()
       this.getEnderecos()
     },
     methods: {
+      getClientId () {
+        this.id_cliente = localStorage.getItem('id_cliente')
+      },
       checkLogin () {
         if (!this.$store.state.logged) {
           this.$router.push('/')
         }
       },
       async getPedidos () {
-        const { data, status } = await getApi('v1/cliente/1/pedidos')
+        const { data, status } = await getApi(`v1/cliente/${this.id_cliente}/pedidos`)
 
         if (status >= 200 && status < 300) {
           this.pedidos = data.pedidos
         }
       },
       async getEnderecos () {
-        const { data, status } = await getApi('v1/cliente/1/enderecos')
+        const { data, status } = await getApi(`v1/cliente/${this.id_cliente}/enderecos`)
 
         if (status >= 200 && status < 300) {
           this.enderecos = data.data
