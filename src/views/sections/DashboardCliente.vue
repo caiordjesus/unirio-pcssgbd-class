@@ -47,7 +47,7 @@
                   <td>{{ pedido.code }}</td>
                   <td>{{ pedido.status }}</td>
                   <td class="text-center">
-                    {{ pedido.date }}
+                    {{ new Date(pedido.date).toLocaleDateString('pt-BR') }}
                   </td>
                   <td class="text-right">
                     <v-btn
@@ -117,7 +117,9 @@
           </v-simple-table>
         </div>
       </div>
+
       <hr class="solid">
+
       <!-- Minhas Assinaturas -->
       <div class="row">
         <div class="col-12">
@@ -130,26 +132,38 @@
               <thead>
                 <tr>
                   <th class="text-left">
-                    Pedido
+                    Inicio
                   </th>
                   <th class="text-left">
-                    Status
-                  </th>
-                  <th class="text-center">
-                    Data
+                    Fim
                   </th>
                   <th class="text-right">
-                    Explorar
+                    Intervalo
+                  </th>
+                  <th class="text-right">
+                    Pedido Referencia
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr
-                  v-for="item in pedidos"
-                  :key="item.name"
+                  v-for="assinatura in assinaturas"
+                  :key="assinatura.fk_recorrencia_id"
                 >
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.calories }}</td>
+                  <td>{{ new Date(assinatura.recorrencia.data_inicio).toLocaleDateString('pt-BR') }}</td>
+                  <td>{{ assinatura.recorrencia.data_fim || '-' }}</td>
+                  <td class="text-right">
+                    {{ assinatura.recorrencia.intervalo_dias }} dias
+                  </td>
+                  <td class="text-right">
+                    <v-btn
+                      tile
+                      color="success"
+                      @click="explorarPedido(assinatura.fk_pedido_id)"
+                    >
+                      Ver
+                    </v-btn>
+                  </td>
                 </tr>
               </tbody>
             </template>
@@ -246,16 +260,18 @@
         valor_total: 0,
         id_cliente: 0,
       },
+      assinaturas: [],
     }),
     created () {
       this.checkLogin()
       this.getClientId()
       this.getPedidos()
       this.getEnderecos()
+      this.getAssinaturas()
     },
     methods: {
       getClientId () {
-        this.id_cliente = localStorage.getItem('id_cliente')
+        this.id_cliente = this.$store.state.id_cliente
       },
       checkLogin () {
         if (!this.$store.state.logged) {
@@ -274,6 +290,14 @@
 
         if (status >= 200 && status < 300) {
           this.enderecos = data.data
+        }
+      },
+      async getAssinaturas () {
+        const { data, status } = await getApi(`v1/cliente/${this.id_cliente}/assinaturas`)
+        console.log(data)
+
+        if (status >= 200 && status < 300) {
+          this.assinaturas = data.data
         }
       },
       async explorarPedido (code) {

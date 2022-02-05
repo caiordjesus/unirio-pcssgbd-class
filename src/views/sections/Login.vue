@@ -95,10 +95,10 @@
             this.$store.commit('login')
             localStorage.setItem('token', data.data.token)
             if (data.data.id_cliente) {
-              localStorage.setItem('id_cliente', data.data.id_cliente)
+              this.$store.commit('setClientId', data.data.id_cliente)
               this.$router.push('DashboardCliente')
             } else {
-              localStorage.setItem('id_funcionario', data.data.id_funcionario)
+              this.$store.commit('setFuncionatioId', data.data.id_funcionario)
             }
           }
         }
