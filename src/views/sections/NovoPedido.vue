@@ -252,8 +252,6 @@
         const vlUnitario = parseFloat(produto.preco_unitario) + personalizacoesSelecionadas.reduce((prev, act) => prev + parseFloat(act.personalizacao.preco_unitario), 0)
         const vlTotal = vlUnitario * this.adicionarPedido.qtd
 
-        console.log('personalizacoesSelecionadas =>', personalizacoesSelecionadas)
-        console.log('produto =>', produto)
         this.cesta.push({
           id: this.cesta.length,
           nome: this.adicionarPedido.nome,
