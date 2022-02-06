@@ -1,6 +1,10 @@
 import axios from 'axios'
 
-const apiUrl = process.env.API_ENDPOINT || 'http://localhost:3001'
+let apiUrl = process.env.API_ENDPOINT || 'http://localhost:3001'
+
+if (window.location.href.includes('netlify')) {
+    apiUrl = 'https://padaria-kipao.herokuapp.com/'
+}
 
 const instance = axios.create({
     baseURL: apiUrl,
