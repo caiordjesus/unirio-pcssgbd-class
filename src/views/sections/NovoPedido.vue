@@ -247,15 +247,27 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-alert
+      :value="alert"
+      color="green"
+      dark
+      border="top"
+      icon="mdi-home"
+      transition="slide-y-transition"
+    >
+      Pedido registrado com sucesso
+    </v-alert>
   </base-section>
 </template>
 
 <script>
   import { getApi, postApi } from '../../network/api'
+
   export default {
     name: 'SectionDashboardCliente',
 
     data: () => ({
+      alert: false,
       produtos: [],
       enderecos: [],
       enderecosHeaders: [
@@ -293,6 +305,14 @@
       this.getFormasPagamento()
     },
     methods: {
+      hide_alert: function (event) {
+        console.log('Hide')
+        // `event` is the native DOM event
+        window.setInterval(() => {
+          this.alert = false
+          console.log('hide alert after 3 seconds')
+        }, 3000)
+      },
       getClientId () {
         this.id_cliente = this.$store.state.id_cliente
       },
@@ -389,10 +409,13 @@
           preco_total: this.valor_total,
           item: this.cesta,
         }
-        const { status } = await postApi('/v1/produtos', postObj)
+        const { status } = await postApi('/v1/pedidos', postObj)
         if (status >= 200 && status <= 299) {
           // TODO: Chamar sweet alert
           console.log('dale familia')
+          this.finalizarPedidoModal.modal = false
+          this.alert = true
+          this.$router.push('/DashboardCliente')
         } else {
           console.log('não dale familia')
         }
