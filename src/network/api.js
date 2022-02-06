@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+const apiUrl = process.env.API_ENDPOINT || 'http://localhost:3001'
+
 const instance = axios.create({
-    baseURL: 'http://localhost:3001',
+    baseURL: apiUrl,
 })
 
 export async function getApi (path, params) {
