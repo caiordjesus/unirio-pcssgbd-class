@@ -114,6 +114,7 @@
         <v-btn
           tile
           color="success"
+          :disabled="valor_total == 0"
           @click="finalizarPedido()"
         >
           Finalizar pedido
@@ -185,16 +186,90 @@
         </v-card>
       </v-dialog>
     </div>
+
+    <!-- Finalizar Pedido -->
+    <v-dialog
+      v-model="finalizarPedidoModal.modal"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Finalizar Pedido
+        </v-card-title>
+
+        <v-data-table
+          v-model="endereco_selecionado"
+          hide-default-footer
+          :headers="enderecosHeaders"
+          :items="enderecos"
+          :single-select="true"
+          item-key="name"
+          show-select
+          class="elevation-1"
+        />
+
+        <hr class="solid">
+
+        <v-data-table
+          v-model="formasPagamentoSelecionado"
+          hide-default-footer
+          :headers="formasParamentoHeaders"
+          :items="formasPagamento"
+          :single-select="true"
+          item-key="nome"
+          show-select
+          class="elevation-1"
+        />
+
+        <hr class="solid">
+        <v-container>
+          <v-text-field
+            v-model="observacao"
+            label="OBS"
+            outlined
+          />
+        </v-container>
+
+        <v-card-actions>
+          <div class="text-right">
+            <span style="font-size: 36px; font-weight: bold">Valor total: {{ valor_total }}</span>
+            <p />
+          </div>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            text
+            :disabled="endereco_selecionado.length == 0 || formasPagamentoSelecionado.length == 0"
+            @click="confirmarPedido()"
+          >
+            Confirmar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </base-section>
 </template>
 
 <script>
-  import { getApi } from '../../network/api'
+  import { getApi, postApi } from '../../network/api'
   export default {
     name: 'SectionDashboardCliente',
 
     data: () => ({
       produtos: [],
+      enderecos: [],
+      enderecosHeaders: [
+        { text: 'Cep', value: 'cep' },
+        { text: 'Logradouro', value: 'logradouro' },
+        { text: 'Número', value: 'numero' },
+        { text: 'Complemento', value: 'complemento' },
+      ],
+      endereco_selecionado: [],
+      formasPagamento: [],
+      formasParamentoHeaders: [
+        { text: 'Forma de Pagamento', value: 'nome' },
+      ],
+      formasPagamentoSelecionado: [],
       adicionarPedido: {
         code: 0,
         modal: false,
@@ -202,13 +277,20 @@
         personalizacoes: [],
         qtd: 1,
       },
+      finalizarPedidoModal: {
+        modal: false,
+      },
       cesta: [],
       valor_total: 0,
+      id_cliente: 0,
+      observacao: '',
     }),
     created () {
       this.checkLogin()
       this.getClientId()
       this.getProdutos()
+      this.getEnderecos()
+      this.getFormasPagamento()
     },
     methods: {
       getClientId () {
@@ -224,6 +306,15 @@
 
         if (status >= 200 && status < 300) {
           this.produtos = data.data
+        }
+      },
+
+      async getFormasPagamento () {
+        const { data, status } = await getApi('v1/metodo_pagamento')
+        console.log(data)
+
+        if (status >= 200 && status < 300) {
+          this.formasPagamento = data.data
         }
       },
 
@@ -258,6 +349,9 @@
           qtd: this.adicionarPedido.qtd,
           vl_total: vlTotal,
           personalizacoes: personalizacoesSelecionadas.length > 0 ? personalizacoesSelecionadas.map(x => x.personalizacao.nome).join(',') : '-',
+          personalizacoesIds: personalizacoesSelecionadas.map(x => x.personalizacao.id),
+          preco_unitario: produto.preco_unitario,
+          produtoId: produto.id,
         })
         this.attValorTotal()
         this.resetAdicionarPedido()
@@ -283,7 +377,33 @@
       },
 
       finalizarPedido () {
-        console.log('finalizar pedido')
+        this.finalizarPedidoModal.modal = true
+      },
+
+      async confirmarPedido () {
+        const postObj = {
+          clientId: this.id_cliente,
+          formaPagamentoId: this.formasPagamentoSelecionado[0].id,
+          frete: 5,
+          observacao: this.observacao,
+          preco_total: this.valor_total,
+          item: this.cesta,
+        }
+        const { status } = await postApi('/v1/produtos', postObj)
+        if (status >= 200 && status <= 299) {
+          // TODO: Chamar sweet alert
+          console.log('dale familia')
+        } else {
+          console.log('não dale familia')
+        }
+      },
+
+      async getEnderecos () {
+        const { data, status } = await getApi(`v1/cliente/${this.id_cliente}/enderecos`)
+
+        if (status >= 200 && status < 300) {
+          this.enderecos = data.data
+        }
       },
     },
   }
