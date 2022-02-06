@@ -53,22 +53,10 @@
         </div>
       </div>
 
-      <!-- Meus Endereços -->
-      <!-- <div class="row">
+      <!-- Cesta -->
+      <div class="row">
         <div class="col-12">
-          <h1>
-            Meus endereços
-            <v-btn
-              class="mx-2"
-              fab
-              dark
-              color="indigo"
-            >
-              <v-icon dark>
-                mdi-plus
-              </v-icon>
-            </v-btn>
-          </h1>
+          <h1> Cesta </h1>
           <v-simple-table
             fixed-header
             height="300px"
@@ -77,34 +65,60 @@
               <thead>
                 <tr>
                   <th class="text-left">
-                    Cep
+                    Produto
                   </th>
                   <th class="text-left">
-                    Logradouro
+                    Quantidade
                   </th>
                   <th class="text-left">
-                    Número
+                    Valor total
                   </th>
                   <th class="text-left">
-                    Complemento
+                    Personalizações
+                  </th>
+                  <th class="text-left">
+                    Remover
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr
-                  v-for="endereco in enderecos"
-                  :key="endereco.cep"
+                  v-for="item in cesta"
+                  :key="item.id"
                 >
-                  <td>{{ endereco.cep }}</td>
-                  <td>{{ endereco.logradouro }}</td>
-                  <td>{{ endereco.numero }}</td>
-                  <td>{{ endereco.complemento }}</td>
+                  <td>{{ item.nome }}</td>
+                  <td>{{ item.qtd }}</td>
+                  <td>{{ item.vl_total }}</td>
+                  <td>{{ item.personalizacoes }}</td>
+                  <td class="text-right">
+                    <v-btn
+                      tile
+                      color="error"
+                      @click="removerDaCesta(item.id)"
+                    >
+                      Remover
+                    </v-btn>
+                  </td>
                 </tr>
               </tbody>
             </template>
           </v-simple-table>
         </div>
-      </div> -->
+      </div>
+
+      <hr class="solid">
+
+      <div class="text-right">
+        <span style="font-size: 36px; font-weight: bold">Valor total: {{ valor_total }}</span>
+        <p />
+        <v-btn
+          tile
+          color="success"
+          @click="finalizarPedido()"
+        >
+          Finalizar pedido
+        </v-btn>
+      </div>
     </v-container>
 
     <!-- Explorar pedido -->
@@ -155,12 +169,17 @@
 
           <v-card-actions>
             <v-spacer />
+            <v-text-field
+              v-model="adicionarPedido.qtd"
+              label="Quantidade"
+              outlined
+            />
             <v-btn
               color="primary"
               text
-              @click="adicionarPedido.modal = false"
+              @click="adicionarProdutoACesta()"
             >
-              Pedir de novo
+              Adicionar
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -177,10 +196,14 @@
     data: () => ({
       produtos: [],
       adicionarPedido: {
+        code: 0,
         modal: false,
         nome: '',
         personalizacoes: [],
+        qtd: 1,
       },
+      cesta: [],
+      valor_total: 0,
     }),
     created () {
       this.checkLogin()
@@ -205,6 +228,7 @@
       },
 
       async adicionarProdutoModal (code) {
+        this.adicionarPedido.code = code
         const { data } = await getApi(`v1/produtos/${code}`)
         this.adicionarPedido.nome = data.data.nome
 
@@ -215,6 +239,53 @@
         this.adicionarPedido.personalizacoes = obj
 
         this.adicionarPedido.modal = true
+      },
+
+      async adicionarProdutoACesta () {
+        const produto = this.produtos.find(x => parseInt(x.id) === parseInt(this.adicionarPedido.code))
+        const personalizacoesSelecionadas = []
+
+        Object.entries(this.adicionarPedido.personalizacoes).forEach(([_, value]) => {
+          if (value.add) personalizacoesSelecionadas.push(value)
+        })
+
+        const vlUnitario = parseFloat(produto.preco_unitario) + personalizacoesSelecionadas.reduce((prev, act) => prev + parseFloat(act.personalizacao.preco_unitario), 0)
+        const vlTotal = vlUnitario * this.adicionarPedido.qtd
+
+        console.log('personalizacoesSelecionadas =>', personalizacoesSelecionadas)
+        console.log('produto =>', produto)
+        this.cesta.push({
+          id: this.cesta.length,
+          nome: this.adicionarPedido.nome,
+          qtd: this.adicionarPedido.qtd,
+          vl_total: vlTotal,
+          personalizacoes: personalizacoesSelecionadas.length > 0 ? personalizacoesSelecionadas.map(x => x.personalizacao.nome).join(',') : '-',
+        })
+        this.attValorTotal()
+        this.resetAdicionarPedido()
+      },
+      resetAdicionarPedido () {
+        this.adicionarPedido = {
+          code: 0,
+          modal: false,
+          nome: '',
+          personalizacoes: [],
+          qtd: 1,
+        }
+      },
+      removerDaCesta (id) {
+        const indexToDelete = this.cesta.findIndex(x => x.id === id)
+        delete this.cesta[indexToDelete]
+        this.cesta = this.cesta.filter(x => x.id)
+        this.attValorTotal()
+      },
+
+      attValorTotal () {
+        this.valor_total = this.cesta.reduce((a, b) => a + b.vl_total, 0)
+      },
+
+      finalizarPedido () {
+        console.log('finalizar pedido')
       },
     },
   }
